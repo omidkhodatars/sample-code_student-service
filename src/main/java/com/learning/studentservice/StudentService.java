@@ -16,4 +16,14 @@ public class StudentService {
         return studentRepo.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
+    public Student createStudent(Student newStudent) {
+        return studentRepo.save(newStudent);
+    }
+
+    public Student updateStudent(Student updatingStudent) {
+        Student existingStudent = studentRepo.findById(updatingStudent.getId()).orElseThrow(StudentNotFoundException::new);
+        existingStudent.setName(updatingStudent.getName());
+        return studentRepo.save(existingStudent);
+    }
+
 }
