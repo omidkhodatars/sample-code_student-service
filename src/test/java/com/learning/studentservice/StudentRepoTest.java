@@ -34,7 +34,7 @@ public class StudentRepoTest {
         Student stu1 = Student.builder().name("Omid").active(true).grade(80).build();
         Student stu2 = Student.builder().name("Mike").active(true).grade(90).build();
         Student stu3 = Student.builder().name("Whatever").active(false).grade(100).build();
-        Arrays.asList(stu1,stu2,stu3).forEach(testEntityManager::persistFlushFind);
+        Arrays.asList(stu1, stu2, stu3).forEach(testEntityManager::persistFlushFind);
         //when
         Double avg = studentRepo.getAvgGradeForActiveStudents();
         //then

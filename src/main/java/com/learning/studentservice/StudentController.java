@@ -21,6 +21,7 @@ public class StudentController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
+
     @PostMapping("/student")
     ResponseEntity<Student> createStudent(@RequestBody Student student) {
         Student createdStudent = studentService.createStudent(student);
