@@ -21,7 +21,8 @@ public class Student {
         this.name = name;
     }
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private boolean active;
