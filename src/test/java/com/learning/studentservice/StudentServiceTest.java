@@ -5,8 +5,11 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -15,7 +18,7 @@ import java.util.Optional;
 @Transactional
 public class StudentServiceTest {
 
-    @Autowired
+    @MockBean
     private StudentRepo studentRepo;
 
     @Autowired
@@ -25,13 +28,14 @@ public class StudentServiceTest {
     @Test
     void getStudentByIdTest() {
         //given
-        Student savedStu = studentRepo.save(new Student(null, "test"));
+        Student student = new Student(1234L, "TestUser");
+        BDDMockito.given(studentRepo.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(student));
         //when
-        Student readStu = studentService.getStudentById(savedStu.getId());
+        Student readStu = studentService.getStudentById(student.getId());
         //then
         BDDAssertions.then(readStu.getId()).isNotNull();
-        BDDAssertions.then(readStu.getName()).isEqualTo("test");
-        BDDAssertions.then(readStu.getId()).isEqualTo(savedStu.getId());
+        BDDAssertions.then(readStu.getName()).isEqualTo("TestUser");
+        BDDAssertions.then(readStu.getId()).isEqualTo(student.getId());
 
     }
 
@@ -50,26 +54,31 @@ public class StudentServiceTest {
     @Test
     void createStudent() {
         //given
-        Student newStudent = new Student(null, "Omid");
+        Student newStudent = new Student(1234L, "Omid");
+        Student negativeTest = new Student(4321L, "Whatever");
+        BDDMockito.given(studentRepo.save(ArgumentMatchers.any())).willReturn(newStudent);
+
         //when
         Student createdStudent = studentService.createStudent(newStudent);
-        Optional<Student> studentFromRepo = studentRepo.findById(createdStudent.getId());
+
         //then
-        BDDAssertions.then(studentFromRepo.isPresent()).isTrue();
+        BDDAssertions.then(createdStudent).isEqualTo(newStudent);
+        BDDAssertions.then(createdStudent).isNotEqualTo(negativeTest);
     }
 
     @DisplayName("service: should update an existing student")
     @Test
     void updateStudent() {
         //given
-        Student existingStudent = studentRepo.save(new Student(null, "Test"));
-        Student updatingStudent = new Student(existingStudent.getId(), "Omid");
+        Student existingStudent = new Student(1234L, "Test");
+        Student newStudent = new Student(1234L, "Omid");
+        BDDMockito.given(studentRepo.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(existingStudent));
+        BDDMockito.given(studentRepo.save(ArgumentMatchers.any())).willReturn(newStudent);
         //when
-        Student updatedStudent = studentService.updateStudent(updatingStudent);
-        Optional<Student> updatedFromRepo = studentRepo.findById(existingStudent.getId());
+        Student updatedStudent = studentService.updateStudent(newStudent);
         //then
-        BDDAssertions.then(updatedFromRepo.isPresent()).isTrue();
-        BDDAssertions.then(updatedFromRepo.get().getId()).isEqualTo(updatedStudent.getId()).isEqualTo(existingStudent.getId());
-        BDDAssertions.then(updatedFromRepo.get().getName()).isEqualTo("Omid").isEqualTo(updatedStudent.getName());
+        BDDAssertions.then(updatedStudent).isEqualTo(newStudent);
+        BDDAssertions.then(updatedStudent.getId()).isEqualTo(newStudent.getId()).isEqualTo(existingStudent.getId());
+        BDDAssertions.then(updatedStudent.getName()).isEqualTo("Omid").isEqualTo(newStudent.getName());
     }
 }
