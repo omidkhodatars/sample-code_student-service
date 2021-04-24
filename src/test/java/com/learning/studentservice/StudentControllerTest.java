@@ -30,7 +30,7 @@ class StudentControllerTest {
         BDDMockito.given(studentService.getStudentById(ArgumentMatchers.anyLong()))
                 .willReturn(Student.builder().id(1L).name("Omid").build());
         //when //then
-        mockMvc.perform(MockMvcRequestBuilders.get("/students/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("name").value("Omid"));
@@ -43,7 +43,7 @@ class StudentControllerTest {
         BDDMockito.given(studentService.getStudentById(ArgumentMatchers.anyLong()))
                 .willThrow(StudentNotFoundException.class);
         //when//then
-        mockMvc.perform(MockMvcRequestBuilders.get("/students/2"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/student/2"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 

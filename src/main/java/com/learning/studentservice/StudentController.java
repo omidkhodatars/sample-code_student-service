@@ -13,7 +13,7 @@ public class StudentController {
     @Autowired
     private final StudentService studentService;
 
-    @GetMapping("/students/{id}")
+    @GetMapping("/student/{id}")
     ResponseEntity<Student> getStudent(@PathVariable Long id) {
         Student stu = studentService.getStudentById(id);
         if (stu != null)

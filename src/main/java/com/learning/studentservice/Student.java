@@ -24,6 +24,7 @@ public class Student {
     @Id
     @GeneratedValue
     private Long id;
+
     private String name;
     private boolean active;
     private int grade;
